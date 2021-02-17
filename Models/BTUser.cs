@@ -9,6 +9,9 @@ namespace BugTracker.Models
 {
     public class BTUser : IdentityUser
     {
+        //Keys 
+        public int CompanyId { get; set; }
+
         //Description
         [Required]
         [StringLength(50)]
@@ -28,8 +31,7 @@ namespace BugTracker.Models
         public string AvatarFileName { get; set; }
         public byte[] AvatarFileData { get; set; }
 
-        //Navigation
-        public int CompanyId { get; set; }
+        //Navigation        
         public virtual Company Company { get; set; }
         public virtual ICollection<Project> Projects { get; set; }
 

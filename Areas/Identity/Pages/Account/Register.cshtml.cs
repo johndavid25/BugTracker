@@ -54,6 +54,8 @@ namespace BugTracker.Areas.Identity.Pages.Account
             [StringLength(50)]
             public string LastName { get; set; }
 
+            public int CompanyId { get; set; }
+
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -87,7 +89,8 @@ namespace BugTracker.Areas.Identity.Pages.Account
                     UserName = Input.Email, 
                     Email = Input.Email,
                     FirstName = Input.FirstName,
-                    LastName = Input.LastName
+                    LastName = Input.LastName,
+                    CompanyId = Input.CompanyId
                 };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
