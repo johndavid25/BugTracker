@@ -1,5 +1,6 @@
 using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Services;
 using BugTracker.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,12 +26,15 @@ namespace BugTracker
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(DataUtility.GetConnectionString(Configuration)));
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddIdentity<BTUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddScoped<IBTRoleService, BTRoleService>();
 
             services.AddMvc();
         }

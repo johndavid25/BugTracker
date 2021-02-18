@@ -48,7 +48,7 @@ namespace BugTracker.Controllers
         // GET: Projects/Create
         public IActionResult Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id");
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace BugTracker.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
             return View(project);
         }
 
@@ -82,7 +82,7 @@ namespace BugTracker.Controllers
             {
                 return NotFound();
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
             return View(project);
         }
 
@@ -118,7 +118,7 @@ namespace BugTracker.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Id", project.CompanyId);
+            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
             return View(project);
         }
 
