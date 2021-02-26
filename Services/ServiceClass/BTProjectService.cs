@@ -42,7 +42,10 @@ namespace BugTracker.Services
                     if (await _roleService.IsUserInRoleAsync(user, Roles.ProjectManager.ToString()))
                     {
                         var oldManager = await ProjectManagerOnProjectsAsync(projectId);
-                        await RemoveUserFromProjectAsync(oldManager.Id, projectId);
+                        if(oldManager != null)
+                        {
+                            await RemoveUserFromProjectAsync(oldManager.Id, projectId);
+                        }
                     }
                     Project project = await _context.Projects.FindAsync(projectId);
 
@@ -65,14 +68,15 @@ namespace BugTracker.Services
 
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
         {
-            var project = await _context.Projects.FindAsync(projectId);
+            var project = await _context.Projects.Include(p => p.Members).FirstOrDefaultAsync(p => p.Id == projectId);
             var flag = project.Members.Any(u => u.Id == userId);
             return flag;
         }
 
         public async Task<IEnumerable<Project>> ListUserProjectsAsync(string userId)
         {
-            if (_contextAccessor.HttpContext.User.IsInRole(Roles.Admin.ToString()))
+            var user = await _userManager.FindByIdAsync(userId);
+            if (await _roleService.IsUserInRoleAsync(user, Roles.Admin.ToString()))
             {
                 return await _context.Projects.ToListAsync();
             }         

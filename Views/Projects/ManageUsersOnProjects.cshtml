@@ -1,0 +1,34 @@
+﻿
+
+<div class="container">
+    <h1>Project Management</h1>
+    <form asp-action="ManageUsersOnProjects" method="post">
+        <div class="row">
+            <div class="col">
+                <label for="userIds" class="control-label">Choose a Project</label>
+                <select name="projectId" style="width: 100%" asp-items="@ViewBag.ProjectId"></select>
+            </div>
+            <div class="col">
+                <label for="roleName" class="control-label">Choose One Project Manager</label><br />
+                <select name="projectManagerId" asp-items="@ViewBag.ProjectManagerId"></select>
+            </div>
+        </div> <br />
+        <div class="row">
+            <div class="col">
+                <label for="userIds" class="control-label">Choose Some Developers</label>
+                <select name="developerIds" style="width: 100%" multiple="multiple" asp-items="@ViewBag.DeveloperIds"></select>
+            </div>
+            <div class="col">
+                <label for="roleName" class="control-label">Choose Some Submitters</label><br />
+                <select name="submitterIds" multiple="multiple" asp-items="@ViewBag.SubmitterIds"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-4 offset-4">
+                <button type="submit" class="btn btn-danger btn-lg mt-3">Save Changes</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+

@@ -23,7 +23,7 @@ namespace BugTracker.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Company",
+                name: "Companies",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -33,11 +33,11 @@ namespace BugTracker.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Company", x => x.Id);
+                    table.PrimaryKey("PK_Companies", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketPriority",
+                name: "TicketPriorities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -46,7 +46,7 @@ namespace BugTracker.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketPriority", x => x.Id);
+                    table.PrimaryKey("PK_TicketPriorities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,7 +63,7 @@ namespace BugTracker.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketType",
+                name: "TicketTypes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -72,7 +72,7 @@ namespace BugTracker.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketType", x => x.Id);
+                    table.PrimaryKey("PK_TicketTypes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -101,11 +101,11 @@ namespace BugTracker.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
                     FirstName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     AvatarFileName = table.Column<string>(type: "text", nullable: true),
                     AvatarFileData = table.Column<byte[]>(type: "bytea", nullable: true),
-                    CompanyId = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -125,15 +125,15 @@ namespace BugTracker.Data.Migrations
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUsers_Company_CompanyId",
+                        name: "FK_AspNetUsers_Companies_CompanyId",
                         column: x => x.CompanyId,
-                        principalTable: "Company",
+                        principalTable: "Companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Project",
+                name: "Projects",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -146,11 +146,11 @@ namespace BugTracker.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Project", x => x.Id);
+                    table.PrimaryKey("PK_Projects", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Project_Company_CompanyId",
+                        name: "FK_Projects_Companies_CompanyId",
                         column: x => x.CompanyId,
-                        principalTable: "Company",
+                        principalTable: "Companies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -241,6 +241,43 @@ namespace BugTracker.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Invites",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false),
+                    InvitorId = table.Column<string>(type: "text", nullable: true),
+                    InviteeId = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true),
+                    CompanyToken = table.Column<Guid>(type: "uuid", nullable: false),
+                    InviteDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsValid = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Invites", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Invites_AspNetUsers_InviteeId",
+                        column: x => x.InviteeId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Invites_AspNetUsers_InvitorId",
+                        column: x => x.InvitorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Invites_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "BTUserProject",
                 columns: table => new
                 {
@@ -257,20 +294,21 @@ namespace BugTracker.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BTUserProject_Project_ProjectsId",
+                        name: "FK_BTUserProject_Projects_ProjectsId",
                         column: x => x.ProjectsId,
-                        principalTable: "Project",
+                        principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Ticket",
+                name: "Tickets",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     ProjectId = table.Column<int>(type: "integer", nullable: false),
+                    TicketTypeId = table.Column<int>(type: "integer", nullable: false),
                     TicketPriorityId = table.Column<int>(type: "integer", nullable: false),
                     TicketStatusId = table.Column<int>(type: "integer", nullable: false),
                     OwnerUserId = table.Column<string>(type: "text", nullable: true),
@@ -278,52 +316,51 @@ namespace BugTracker.Data.Migrations
                     Title = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    Updated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    TicketTypeId = table.Column<int>(type: "integer", nullable: true)
+                    Updated = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Ticket", x => x.Id);
+                    table.PrimaryKey("PK_Tickets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Ticket_AspNetUsers_DeveloperUserId",
+                        name: "FK_Tickets_AspNetUsers_DeveloperUserId",
                         column: x => x.DeveloperUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Ticket_AspNetUsers_OwnerUserId",
+                        name: "FK_Tickets_AspNetUsers_OwnerUserId",
                         column: x => x.OwnerUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Ticket_Project_ProjectId",
+                        name: "FK_Tickets_Projects_ProjectId",
                         column: x => x.ProjectId,
-                        principalTable: "Project",
+                        principalTable: "Projects",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Ticket_TicketPriority_TicketPriorityId",
+                        name: "FK_Tickets_TicketPriorities_TicketPriorityId",
                         column: x => x.TicketPriorityId,
-                        principalTable: "TicketPriority",
+                        principalTable: "TicketPriorities",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Ticket_TicketStatus_TicketStatusId",
+                        name: "FK_Tickets_TicketStatus_TicketStatusId",
                         column: x => x.TicketStatusId,
                         principalTable: "TicketStatus",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Ticket_TicketType_TicketTypeId",
+                        name: "FK_Tickets_TicketTypes_TicketTypeId",
                         column: x => x.TicketTypeId,
-                        principalTable: "TicketType",
+                        principalTable: "TicketTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Notification",
+                name: "Notifications",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -337,29 +374,29 @@ namespace BugTracker.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Notification", x => x.Id);
+                    table.PrimaryKey("PK_Notifications", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notification_AspNetUsers_RecipientId",
+                        name: "FK_Notifications_AspNetUsers_RecipientId",
                         column: x => x.RecipientId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Notification_AspNetUsers_SenderId",
+                        name: "FK_Notifications_AspNetUsers_SenderId",
                         column: x => x.SenderId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Notification_Ticket_TicketId",
+                        name: "FK_Notifications_Tickets_TicketId",
                         column: x => x.TicketId,
-                        principalTable: "Ticket",
+                        principalTable: "Tickets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketAttachment",
+                name: "TicketAttachments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -373,17 +410,17 @@ namespace BugTracker.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketAttachment", x => x.Id);
+                    table.PrimaryKey("PK_TicketAttachments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TicketAttachment_AspNetUsers_UserId",
+                        name: "FK_TicketAttachments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TicketAttachment_Ticket_TicketId",
+                        name: "FK_TicketAttachments_Tickets_TicketId",
                         column: x => x.TicketId,
-                        principalTable: "Ticket",
+                        principalTable: "Tickets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -395,7 +432,7 @@ namespace BugTracker.Data.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TicketId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true),
                     Comment = table.Column<string>(type: "text", nullable: true),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     BTUserId = table.Column<string>(type: "text", nullable: true)
@@ -410,15 +447,15 @@ namespace BugTracker.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TicketComments_Ticket_TicketId",
+                        name: "FK_TicketComments_Tickets_TicketId",
                         column: x => x.TicketId,
-                        principalTable: "Ticket",
+                        principalTable: "Tickets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "TicketHistory",
+                name: "TicketHistories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -432,17 +469,17 @@ namespace BugTracker.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TicketHistory", x => x.Id);
+                    table.PrimaryKey("PK_TicketHistories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TicketHistory_AspNetUsers_UserId",
+                        name: "FK_TicketHistories_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_TicketHistory_Ticket_TicketId",
+                        name: "FK_TicketHistories_Tickets_TicketId",
                         column: x => x.TicketId,
-                        principalTable: "Ticket",
+                        principalTable: "Tickets",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -495,63 +532,48 @@ namespace BugTracker.Data.Migrations
                 column: "ProjectsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notification_RecipientId",
-                table: "Notification",
-                column: "RecipientId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notification_SenderId",
-                table: "Notification",
-                column: "SenderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notification_TicketId",
-                table: "Notification",
-                column: "TicketId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Project_CompanyId",
-                table: "Project",
+                name: "IX_Invites_CompanyId",
+                table: "Invites",
                 column: "CompanyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ticket_DeveloperUserId",
-                table: "Ticket",
-                column: "DeveloperUserId");
+                name: "IX_Invites_InviteeId",
+                table: "Invites",
+                column: "InviteeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ticket_OwnerUserId",
-                table: "Ticket",
-                column: "OwnerUserId");
+                name: "IX_Invites_InvitorId",
+                table: "Invites",
+                column: "InvitorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ticket_ProjectId",
-                table: "Ticket",
-                column: "ProjectId");
+                name: "IX_Notifications_RecipientId",
+                table: "Notifications",
+                column: "RecipientId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ticket_TicketPriorityId",
-                table: "Ticket",
-                column: "TicketPriorityId");
+                name: "IX_Notifications_SenderId",
+                table: "Notifications",
+                column: "SenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Ticket_TicketStatusId",
-                table: "Ticket",
-                column: "TicketStatusId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Ticket_TicketTypeId",
-                table: "Ticket",
-                column: "TicketTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TicketAttachment_TicketId",
-                table: "TicketAttachment",
+                name: "IX_Notifications_TicketId",
+                table: "Notifications",
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketAttachment_UserId",
-                table: "TicketAttachment",
+                name: "IX_Projects_CompanyId",
+                table: "Projects",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketAttachments_TicketId",
+                table: "TicketAttachments",
+                column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketAttachments_UserId",
+                table: "TicketAttachments",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -565,14 +587,44 @@ namespace BugTracker.Data.Migrations
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketHistory_TicketId",
-                table: "TicketHistory",
+                name: "IX_TicketHistories_TicketId",
+                table: "TicketHistories",
                 column: "TicketId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TicketHistory_UserId",
-                table: "TicketHistory",
+                name: "IX_TicketHistories_UserId",
+                table: "TicketHistories",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_DeveloperUserId",
+                table: "Tickets",
+                column: "DeveloperUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_OwnerUserId",
+                table: "Tickets",
+                column: "OwnerUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_ProjectId",
+                table: "Tickets",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_TicketPriorityId",
+                table: "Tickets",
+                column: "TicketPriorityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_TicketStatusId",
+                table: "Tickets",
+                column: "TicketStatusId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_TicketTypeId",
+                table: "Tickets",
+                column: "TicketTypeId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -596,40 +648,43 @@ namespace BugTracker.Data.Migrations
                 name: "BTUserProject");
 
             migrationBuilder.DropTable(
-                name: "Notification");
+                name: "Invites");
 
             migrationBuilder.DropTable(
-                name: "TicketAttachment");
+                name: "Notifications");
+
+            migrationBuilder.DropTable(
+                name: "TicketAttachments");
 
             migrationBuilder.DropTable(
                 name: "TicketComments");
 
             migrationBuilder.DropTable(
-                name: "TicketHistory");
+                name: "TicketHistories");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Ticket");
+                name: "Tickets");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Project");
+                name: "Projects");
 
             migrationBuilder.DropTable(
-                name: "TicketPriority");
+                name: "TicketPriorities");
 
             migrationBuilder.DropTable(
                 name: "TicketStatus");
 
             migrationBuilder.DropTable(
-                name: "TicketType");
+                name: "TicketTypes");
 
             migrationBuilder.DropTable(
-                name: "Company");
+                name: "Companies");
         }
     }
 }

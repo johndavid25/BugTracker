@@ -43,7 +43,7 @@ namespace BugTracker.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ManageRoles(List<string> userIds, string roleName)
         {
-            //Go through alll of the userIds I sent one at a time
+            //Go through all of the userIds I sent one at a time
             foreach (var userId in userIds)
             {
                 //Us the userId to find the whole user record 

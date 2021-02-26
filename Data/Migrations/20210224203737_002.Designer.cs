@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BugTracker.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210217162019_001")]
-    partial class _001
+    [Migration("20210224203737_002")]
+    partial class _002
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -136,7 +136,46 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company");
+                    b.ToTable("Companies");
+                });
+
+            modelBuilder.Entity("BugTracker.Models.Invite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("CompanyToken")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("InviteDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InviteeId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("InvitorId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsValid")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("InviteeId");
+
+                    b.HasIndex("InvitorId");
+
+                    b.ToTable("Invites");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Notification", b =>
@@ -172,7 +211,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Notification");
+                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Project", b =>
@@ -203,7 +242,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("CompanyId");
 
-                    b.ToTable("Project");
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("BugTracker.Models.Ticket", b =>
@@ -235,7 +274,7 @@ namespace BugTracker.Data.Migrations
                     b.Property<int>("TicketStatusId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("TicketTypeId")
+                    b.Property<int>("TicketTypeId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
@@ -260,7 +299,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("TicketTypeId");
 
-                    b.ToTable("Ticket");
+                    b.ToTable("Tickets");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketAttachment", b =>
@@ -294,7 +333,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TicketAttachment");
+                    b.ToTable("TicketAttachments");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketComments", b =>
@@ -303,9 +342,6 @@ namespace BugTracker.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("BTUserId")
-                        .HasColumnType("text");
 
                     b.Property<string>("Comment")
                         .HasColumnType("text");
@@ -316,14 +352,14 @@ namespace BugTracker.Data.Migrations
                     b.Property<int>("TicketId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BTUserId");
-
                     b.HasIndex("TicketId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TicketComments");
                 });
@@ -359,7 +395,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TicketHistory");
+                    b.ToTable("TicketHistories");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketPriority", b =>
@@ -374,7 +410,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketPriority");
+                    b.ToTable("TicketPriorities");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketStatus", b =>
@@ -404,7 +440,7 @@ namespace BugTracker.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TicketType");
+                    b.ToTable("TicketTypes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -563,6 +599,29 @@ namespace BugTracker.Data.Migrations
                     b.Navigation("Company");
                 });
 
+            modelBuilder.Entity("BugTracker.Models.Invite", b =>
+                {
+                    b.HasOne("BugTracker.Models.Company", "Company")
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BugTracker.Models.BTUser", "Invitee")
+                        .WithMany()
+                        .HasForeignKey("InviteeId");
+
+                    b.HasOne("BugTracker.Models.BTUser", "Invitor")
+                        .WithMany()
+                        .HasForeignKey("InvitorId");
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Invitee");
+
+                    b.Navigation("Invitor");
+                });
+
             modelBuilder.Entity("BugTracker.Models.Notification", b =>
                 {
                     b.HasOne("BugTracker.Models.BTUser", "Recipient")
@@ -625,7 +684,9 @@ namespace BugTracker.Data.Migrations
 
                     b.HasOne("BugTracker.Models.TicketType", "TicketType")
                         .WithMany()
-                        .HasForeignKey("TicketTypeId");
+                        .HasForeignKey("TicketTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("DeveloperUser");
 
@@ -659,19 +720,19 @@ namespace BugTracker.Data.Migrations
 
             modelBuilder.Entity("BugTracker.Models.TicketComments", b =>
                 {
-                    b.HasOne("BugTracker.Models.BTUser", "BTUser")
-                        .WithMany()
-                        .HasForeignKey("BTUserId");
-
                     b.HasOne("BugTracker.Models.Ticket", "Ticket")
                         .WithMany("Comments")
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BTUser");
+                    b.HasOne("BugTracker.Models.BTUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketHistory", b =>

@@ -341,9 +341,6 @@ namespace BugTracker.Data.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<string>("BTUserId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Comment")
                         .HasColumnType("text");
 
@@ -353,14 +350,14 @@ namespace BugTracker.Data.Migrations
                     b.Property<int>("TicketId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BTUserId");
-
                     b.HasIndex("TicketId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("TicketComments");
                 });
@@ -721,19 +718,19 @@ namespace BugTracker.Data.Migrations
 
             modelBuilder.Entity("BugTracker.Models.TicketComments", b =>
                 {
-                    b.HasOne("BugTracker.Models.BTUser", "BTUser")
-                        .WithMany()
-                        .HasForeignKey("BTUserId");
-
                     b.HasOne("BugTracker.Models.Ticket", "Ticket")
                         .WithMany("Comments")
                         .HasForeignKey("TicketId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BTUser");
+                    b.HasOne("BugTracker.Models.BTUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Ticket");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BugTracker.Models.TicketHistory", b =>

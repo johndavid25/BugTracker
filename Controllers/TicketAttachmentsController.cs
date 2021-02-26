@@ -7,16 +7,20 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using System.IO;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugTracker.Controllers
 {
     public class TicketAttachmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<BTUser> _userManager;
 
-        public TicketAttachmentsController(ApplicationDbContext context)
+        public TicketAttachmentsController(ApplicationDbContext context, UserManager<BTUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: TicketAttachments
@@ -59,10 +63,18 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TicketId,UserId,FileName,FileData,Description,Created")] TicketAttachment ticketAttachment)
+        public async Task<IActionResult> Create([Bind("Id,Formfile,Image,TicketId,UserId,Description,Created")] TicketAttachment ticketAttachment)
         {
             if (ModelState.IsValid)
             {
+                MemoryStream ms = new MemoryStream();
+                await ticketAttachment.Formfile.CopyToAsync(ms);
+
+                ticketAttachment.FileData = ms.ToArray();
+                ticketAttachment.FileName = ticketAttachment.Formfile.FileName;
+                ticketAttachment.Created = DateTimeOffset.Now;
+                ticketAttachment.UserId = _userManager.GetUserId(User);
+
                 _context.Add(ticketAttachment);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

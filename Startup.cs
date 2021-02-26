@@ -1,10 +1,12 @@
 using BugTracker.Data;
 using BugTracker.Models;
 using BugTracker.Services;
+using BugTracker.Services.ServiceClass;
 using BugTracker.Utilities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +38,11 @@ namespace BugTracker
 
             services.AddScoped<IBTRoleService, BTRoleService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
+            services.AddScoped<IBTHistoryService, BTHistoryService>();
+
+            //Services needed to send emails
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.AddScoped<IEmailSender, EmailService>();
 
             services.AddMvc();
         }

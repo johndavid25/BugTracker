@@ -10,7 +10,7 @@ namespace BugTracker.Models
         //Keys 
         public int Id { get; set; }
         public int TicketId { get; set; }
-        public int UserId { get; set; }
+        public string UserId { get; set; }
 
         //Description
         public string Comment { get; set; }
@@ -18,6 +18,6 @@ namespace BugTracker.Models
 
         //Navigation
         public virtual Ticket Ticket { get; set; }
-        public virtual BTUser BTUser { get; set; }
+        public virtual BTUser User { get; set; }
     }
 }

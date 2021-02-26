@@ -7,16 +7,54 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
 using BugTracker.Models;
+using BugTracker.Services;
+using BugTracker.Data.Enums;
 
 namespace BugTracker.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IBTProjectService _projectService;
+        private readonly IBTRoleService _roleService;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context, IBTProjectService projectService, IBTRoleService roleService)
         {
             _context = context;
+            _projectService = projectService;
+            _roleService = roleService;
+        }
+
+        public async Task<IActionResult> ManageUsersOnProjects()
+        {
+            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
+            ViewData["ProjectManagerId"] = new SelectList(await _roleService.UsersInRoleAsync(Roles.ProjectManager.ToString()), "Id", "FullName");
+            ViewData["DeveloperIds"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Developer.ToString()), "Id", "FullName");
+            ViewData["SubmitterIds"] = new MultiSelectList(await _roleService.UsersInRoleAsync(Roles.Submitter.ToString()), "Id", "FullName");
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+
+        public async Task<IActionResult> ManageUsersOnProjects(int projectId, string projectManagerId, List<string> developerIds, List<string> submitterIds)
+        {
+            var currentlyOnProject = await _projectService.UsersOnProjectAsync(projectId);
+            foreach(var user in currentlyOnProject)
+            {
+                await _projectService.RemoveUserFromProjectAsync(user.Id, projectId);
+            }
+            await _projectService.AddUserToProjectAsync(projectManagerId, projectId);
+            foreach(var userId in developerIds)
+            {
+                await _projectService.AddUserToProjectAsync(userId, projectId);
+            }
+            foreach(var userId in submitterIds)
+            {
+                await _projectService.AddUserToProjectAsync(userId, projectId);
+            }
+            return RedirectToAction();
         }
 
         // GET: Projects
@@ -36,6 +74,8 @@ namespace BugTracker.Controllers
 
             var project = await _context.Projects
                 .Include(p => p.Company)
+                .Include(p => p.Tickets)
+                .Include(p => p.Members)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (project == null)
             {
