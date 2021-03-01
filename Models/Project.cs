@@ -16,6 +16,8 @@ namespace BugTracker.Models
 
         //Keys 
         public int Id { get; set; }
+        [Display(Name = "Company")]
+        public int? CompanyId { get; set; }
 
         //Description 
         [Required]
@@ -34,11 +36,12 @@ namespace BugTracker.Models
         public IFormFile ImageFormFile { get; set; }
         public string ImageFileName { get; set; }
         public byte[] ImageFileData { get; set; }
-        public int? CompanyId { get; set; }
+        
 
         //Navigation
         public virtual ICollection<BTUser> Members { get; set; } 
-        public virtual ICollection<Ticket> Tickets { get; set; } 
+        public virtual ICollection<Ticket> Tickets { get; set; }
+        [Display(Name = "Company")]
         public virtual Company Company { get; set; }
     }
 }

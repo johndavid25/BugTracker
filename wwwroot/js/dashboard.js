@@ -225,7 +225,7 @@ $(function () {
                     }
                 },
                 series: [{
-                    name: 'Comments',
+                    name: 'Ticket Type',
                     data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
                 }, {
                     name: 'Product View',

@@ -12,36 +12,43 @@
     <div class="row">
         <div class="col">
             <label for="userIds" class="control-label">Employee (You can choose multiple)</label>
-            <select name="userIds" style="width: 100%" multiple="multiple" asp-items="@users"></select>
+            <select class="custom-select" name="userIds" style="width: 100%" multiple="multiple" asp-items="@users"></select>
         </div>
         <div class="col">
             <label for="roleName" class="control-label">Role</label><br />
-            <select name="roleName" asp-items="@roles"></select>
+            <select class="form-control" name="roleName" asp-items="@roles"></select>
         </div>
     </div>
     <div class="row">
         <div class="col-4 offset-4">
-            <button type="submit" class="btn btn-danger btn-lg mt-3">Save Changes</button>
+            <button type="submit" class="btn btn-info btn-lg mt-3">Save Changes</button>
         </div>
     </div>
 </form>
-<hr />  
+<hr />
 
-<table class="table table-bordered table-danger table-hover">
-    <thead class="thead-dark">
-        <tr>
-            <th scope="col">Employee</th>
-            <th scope="col">Role</th>
+<div class="card">
+    <div class="card-body">
+        <h6 class="card-title">Managment/Roles</h6>
+        <div class="table-responsive">
+            <table id="recent-orders" class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Employee</th>
+                        <th scope="col">Role</th>
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in userManager.Users.ToList())
-        {
-            <tr>
-                <td>@user.FullName</td>
-                <td>@((await roleService.ListUserRolesAsync(user)).FirstOrDefault())</td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in userManager.Users.ToList())
+                    {
+                        <tr>
+                            <td>@user.FullName</td>
+                            <td>@((await roleService.ListUserRolesAsync(user)).FirstOrDefault())</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

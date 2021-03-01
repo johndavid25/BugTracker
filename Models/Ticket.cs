@@ -16,11 +16,17 @@ namespace BugTracker.Models
 
         //Keys 
         public int Id { get; set; }
+        [Display(Name ="Project")]
         public int ProjectId { get; set; }
+        [Display(Name = "Type")]
         public int TicketTypeId { get; set; }
+        [Display(Name = "Priority")]
         public int TicketPriorityId { get; set; }
+        [Display(Name = "Status")]
         public int TicketStatusId { get; set; }
+        [Display(Name = "Owner")]
         public string OwnerUserId { get; set; }
+        [Display(Name = "Developer")]
         public string DeveloperUserId { get; set; }
 
         //Description
