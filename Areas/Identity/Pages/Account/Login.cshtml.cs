@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace BugTracker.Areas.Identity.Pages.Account
 {
@@ -19,14 +20,17 @@ namespace BugTracker.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly UserManager<BTUser> _userManager;
+        private readonly IConfiguration _configuration;
         private readonly SignInManager<BTUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
 
         public LoginModel(SignInManager<BTUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<BTUser> userManager)
+            UserManager<BTUser> userManager,
+            IConfiguration configuration)
         {
             _userManager = userManager;
+            _configuration = configuration;
             _signInManager = signInManager;
             _logger = logger;
         }
@@ -72,9 +76,34 @@ namespace BugTracker.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string returnUrl = null)
+        public async Task<IActionResult> OnPostAsync(string returnUrl = null, string demoEmail = null)
         {
             returnUrl ??= Url.Content("~/");
+
+            //demoEmail is null by default this code only triggers on a doemo login
+            if (!string.IsNullOrWhiteSpace(demoEmail))
+            {
+                //access the appSetting.json to find the key passed in 
+                var email = _configuration[demoEmail];
+                //access appSetting.json to find my shares password for demo users
+                var password = _configuration["DemoPassword"];
+
+                //sign in using the values pulled from appSettings.json
+                var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: false);
+                //standard redirect after login - you may need to update this based on your route configuration
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User logged in.");
+                    return LocalRedirect(returnUrl);
+                }
+                //fail case to return to the login screen - very unlikely to occur, but better safe
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    return Page();
+                }
+
+            }
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         

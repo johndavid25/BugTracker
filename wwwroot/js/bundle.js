@@ -89,12 +89,3 @@
 
 $(function(){$('body').append('<div class="colors"><span class="bg-primary"></span><span class="bg-secondary"></span><span class="bg-info"></span><span class="bg-success"></span><span class="bg-danger"></span><span class="bg-warning"></span></div>')});
 
-/*-------------------
-        Summernote 
-    --------------------- */
-$('#Description').summernote({
-    placeholder: 'Enter Text Here...',
-    tabsize: 2,
-    height: 300,
-    width: 800,
-});

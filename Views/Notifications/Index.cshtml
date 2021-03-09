@@ -30,7 +30,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Sender)
             </th>
-            <th></th>
+            <th class="text-right">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -49,15 +49,24 @@
                 @Html.DisplayFor(modelItem => item.Ticket.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Recipient.Id)
+                @Html.DisplayFor(modelItem => item.Recipient.FullName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Sender.Id)
+                @Html.DisplayFor(modelItem => item.Sender.FullName)
             </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            <td class="text-right">
+                <div class="dropdown">
+                    <a href="#" data-toggle="dropdown"
+                       class="btn btn-floating"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="ti-more-alt"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="dropdown-item">Detail</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="dropdown-item">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item text-danger">Delete</a>
+                    </div>
+                </div>
             </td>
         </tr>
 }

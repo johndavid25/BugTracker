@@ -36,37 +36,37 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ImageFileName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.ImageFileData)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Company.Id)
-                        </td>
-                        <td class="text-right">
-                            <div class="dropdown">
-                                <a href="#" data-toggle="dropdown"
-                                   class="btn btn-floating"
-                                   aria-haspopup="true" aria-expanded="false">
-                                    <i class="ti-more-alt"></i>
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right">
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="dropdown-item">Detail</a>
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="dropdown-item">Edit</a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item text-danger">Delete</a>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                <a href="#" data-toggle="popover" data-trigger="focus hover" title=" @Html.DisplayFor(modelItem => item.Name)" data-content="@Html.DisplayFor(modelItem => item.Description)"><i class="ti-more"></i></a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ImageFileName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ImageFileData)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Company.Name)
+                            </td>
+                            <td class="text-right">
+                                <div class="dropdown">
+                                    <a href="#" data-toggle="dropdown"
+                                       class="btn btn-floating"
+                                       aria-haspopup="true" aria-expanded="false">
+                                        <i class="ti-angle-down"></i>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="dropdown-item">Detail</a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="dropdown-item">Edit</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="dropdown-item text-danger">Delete</a>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>

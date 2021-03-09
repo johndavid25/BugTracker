@@ -1,6 +1,7 @@
 using BugTracker.Data;
 using BugTracker.Models;
 using BugTracker.Services;
+using BugTracker.Services.Interfaces;
 using BugTracker.Services.ServiceClass;
 using BugTracker.Utilities;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,7 @@ namespace BugTracker
             services.AddScoped<IBTRoleService, BTRoleService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<IBTHistoryService, BTHistoryService>();
+            services.AddScoped<IBTNotificationsService, BTNotificationsService>();
 
             //Services needed to send emails
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));

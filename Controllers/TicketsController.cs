@@ -9,34 +9,101 @@ using BugTracker.Data;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using BugTracker.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugTracker.Controllers
 {
+    [Authorize]
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
         private readonly IBTHistoryService _historyService;
+        private readonly IBTProjectService _projectService;
 
         public TicketsController(
-            ApplicationDbContext context, 
-            UserManager<BTUser> userManager, 
-            IBTHistoryService historyService)
+            ApplicationDbContext context,
+            UserManager<BTUser> userManager,
+            IBTHistoryService historyService,
+            IBTProjectService projectService)
         {
             _context = context;
             _userManager = userManager;
             _historyService = historyService;
+            _projectService = projectService;
         }
 
         // GET: Tickets
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketType).Include(t => t.TicketPriority).Include(t => t.TicketStatus);
+            var applicationDbContext = _context.Tickets
+                .Include(t => t.DeveloperUser)
+                .Include(t => t.OwnerUser)
+                .Include(t => t.Project)
+                .Include(t => t.TicketType)
+                .Include(t => t.TicketPriority)
+                .Include(t => t.TicketStatus);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Tickets/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Tickets (My Tickets) 
+        public async Task<IActionResult> MyTickets()
+        {
+            var model = new List<Ticket>();
+            if (User.IsInRole("Admin"))//Test if Admin
+            {
+                model = await _context.Tickets
+                .Include(t => t.DeveloperUser)
+                .Include(t => t.OwnerUser)
+                .Include(t => t.Project)
+                .Include(t => t.TicketType)
+                .Include(t => t.TicketPriority)
+                .Include(t => t.TicketStatus).ToListAsync();
+            }
+            else if (User.IsInRole("ProjectManager"))//Test if Project Manager
+            {
+                var userId = _userManager.GetUserId(User);
+                var projects = await _projectService.ListUserProjectsAsync(userId);
+
+                model = projects.SelectMany(p => p.Tickets).ToList();
+            }
+            else if (User.IsInRole("Developer"))//Test if Developer
+            {
+                var userId = _userManager.GetUserId(User);
+                model = _context.Tickets.Where(t => t.DeveloperUserId == userId).ToList();
+            }
+            else //Test if Owner
+            {
+                var userId = _userManager.GetUserId(User);
+                model = _context.Tickets.Where(t => t.OwnerUserId == userId).ToList();
+            }
+
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> GoToTicket(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var notification = await _context.Notifications.FindAsync((int)id);
+
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+            notification.Viewed = true;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = notification.TicketId });
+        }
+
+            // GET: Tickets/Details/5
+            public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {

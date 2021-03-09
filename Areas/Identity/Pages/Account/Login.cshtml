@@ -62,59 +62,36 @@
                 <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
             </div>
             <button type="submit" class="btn btn-primary btn-block">Sign in</button>
-            <hr>
-            <p class="text-muted">Login with your social media account.</p>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a href="#" class="btn btn-floating btn-facebook">
-                        <i class="fa fa-facebook"></i>
-                    </a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="#" class="btn btn-floating btn-google">
-                        <i class="fa fa-google"></i>
-                    </a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="#" class="btn btn-floating btn-instagram">
-                        <i class="fa fa-github-alt"></i>
-                    </a>
-                </li>
-            </ul>
-            <hr>
-            <p class="text-muted">Demo User Accounts</p>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a href="#" class="btn btn-floating btn-twitter" data-toggle="tooltip" data-placement="bottom" title="Admin">
-                        <i class="fas fa-chess-king"></i>
-                    </a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="#" class="btn btn-floating btn-behance" data-toggle="tooltip" data-placement="bottom" title="Manager">
-                        <i class="fas fa-chess-rook"></i>
-                    </a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="#" class="btn btn-floating btn-dribbble" data-toggle="tooltip" data-placement="bottom" title="Developer">
-                        <i class="fas fa-chess-bishop"></i>
-                    </a>
-                </li>
-                <li class="list-inline-item">
-                    <a href="#" class="btn btn-floating btn-linkedin" data-toggle="tooltip" data-placement="bottom" title="Submitter">
-                        <i class="fas fa-chess-knight"></i>
-                    </a>
-                </li>
-            </ul>
-            <hr>
-            <p class="text-muted">Need another confirmation?</p>
-            <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="btn btn-outline-light btn-sm">Resend email confirmation</a>
-
-            <br />
-
-            <p class="text-muted">Don't have an account?</p>
-            <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-outline-light btn-sm">Register now!</a>
-
         </form>
+        <hr>
+        <p class="text-muted">Demo User Accounts</p>
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <form id="account" method="post">
+                    <button type="submit" name="demoEmail" value="DemoAdminEmail" class="btn btn-floating btn-twitter mr-3" data-toggle="tooltip" data-placement="bottom" title="Administrator">
+                        <i class="fas fa-chess-king"></i>
+                    </button>
+                    <button type="submit" name="demoEmail" value="DemoPMEmail" class="btn btn-floating btn-behance mr-3" data-toggle="tooltip" data-placement="bottom" title="Project Manager">
+                        <i class="fas fa-chess-bishop"></i>
+                    </button>
+                    <button type="submit" name="demoEmail" value="DemoDevEmail" class="btn btn-floating btn-dribbble mr-3" data-toggle="tooltip" data-placement="bottom" title="Developer">
+                        <i class="fas fa-chess-knight"></i>
+                    </button>
+                    <button type="submit" name="demoEmail" value="DemoSubEmail" class="btn btn-floating btn-linkedin" data-toggle="tooltip" data-placement="bottom" title="Submitter">
+                        <i class="fas fa-chess-rook"></i>
+                    </button>
+                </form>
+            </li>
+        </ul>
+        <hr>
+        <p class="text-muted">Need another confirmation?</p>
+        <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="btn btn-outline-light btn-sm">Resend email confirmation</a>
+
+        <br />
+
+        <p class="text-muted">Don't have an account?</p>
+        <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="btn btn-outline-light btn-sm">Register now!</a>
+
         <!-- ./ form -->
     </div>
 
@@ -125,7 +102,7 @@
     <script src="~/js/app.min.js"></script>
 
     <!--Font Awesome-->
-    <script src="https://kit.fontawesome.com/53a6117d50.js" crossorigin="anonymous"></script>
+    <script src="//kit.fontawesome.com/53a6117d50.js" crossorigin="anonymous"></script>
 </body>
 </html>
 
@@ -134,7 +111,29 @@
 }
 
 
-@*<h1>@ViewData["Title"]</h1>
+
+
+@*        <p class="text-muted">Login with your social media account.</p>
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <a href="#" class="btn btn-floating btn-facebook">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="btn btn-floating btn-google">
+                    <i class="fa fa-google"></i>
+                </a>
+            </li>
+            <li class="list-inline-item">
+                <a href="#" class="btn btn-floating btn-instagram">
+                    <i class="fa fa-github-alt"></i>
+                </a>
+            </li>
+        </ul>
+        <hr>
+    
+    <h1>@ViewData["Title"]</h1>
     <div class="row">
         <div class="col-md-4">
             <section>

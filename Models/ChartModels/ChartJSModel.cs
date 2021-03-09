@@ -7,11 +7,21 @@ namespace BugTracker.Models.ChartModels
 {
     public class ChartJSModel
     {
-        //I need 2 collections of strings and 1 collections of integers
+
+        public ChartJSModel()
+        {
+            Labels = new List<string>();
+            Data = new List<int>();
+            BackgroundColors = new List<string>();
+            BorderColors = new List<string>();
+        }
+
         public List<string> Labels { get; set; }
 
         public List<int> Data { get; set; }
 
         public List<string> BackgroundColors { get; set; }
+
+        public List<string> BorderColors { get; set; }
     }
 }

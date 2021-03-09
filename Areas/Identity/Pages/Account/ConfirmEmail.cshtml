@@ -2,6 +2,63 @@
 @model ConfirmEmailModel
 @{
     ViewData["Title"] = "Confirm email";
+    Layout = null;
 }
 
-<h1>@ViewData["Title"]</h1>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Gogi - Admin and Dashboard Template</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/img/favicon.png" />
+
+    <!-- Plugin styles -->
+    <link rel="stylesheet" href="~/css/bundle.css" type="text/css">
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="~/css/app.min.css" type="text/css">
+</head>
+<body class="form-membership">
+
+    <!-- begin::preloader-->
+    <div class="preloader">
+        <div class="preloader-icon"></div>
+    </div>
+    <!-- end::preloader -->
+
+    <div class="form-wrapper">
+
+        <!-- logo -->
+        <div id="logo">
+            <img src="~/media/image/dark-logo.png" alt="image">
+        </div>
+        <!-- ./ logo -->
+
+        <h1>Email Confirmed</h1>
+        <br />
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary btn-block"> Please Sign In!</a>
+
+    </div>
+
+    <!-- Plugin scripts -->
+    <script src="~/js/bundle.js"></script>
+
+    <!-- App scripts -->
+    <script src="~/js/app.min.js"></script>
+
+    <!--Font Awesome-->
+    <script src="//kit.fontawesome.com/53a6117d50.js" crossorigin="anonymous"></script>
+</body>
+</html>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+@*<h1>@ViewData["Title"]</h1>*@

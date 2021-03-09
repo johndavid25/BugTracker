@@ -22,5 +22,7 @@ namespace BugTracker.Services
         public Task<IEnumerable<BTUser>> UsersNotInRoleAsync(string roleName);
 
         public IEnumerable<IdentityRole> NonDemoRoles();
+
+        public Task<string> NonDemoUserRole(string userId);
     }
 }

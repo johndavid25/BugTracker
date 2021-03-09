@@ -296,3 +296,26 @@ $(function () {
     });
 
 });
+
+/*-------------------
+        Summernote 
+    --------------------- */
+$('#Description').summernote({
+    placeholder: 'Enter Text Here...',
+    tabsize: 2,
+    height: 300,
+    width: 800,
+});
+
+//document.getElementById("markAllRead").addEventListener("click", function () {
+//    markedRead();
+//});
+
+//function markedRead() {
+//    var unread = ((await notificationsService.GetUnreadNotificationsAsync(User)).ToListAsync());
+//    for (var loop = 0; loop <= unread; loop++) {
+//        if (loop == unread) {
+//            unread = notification
+//        }
+//    }
+//}

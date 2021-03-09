@@ -81,7 +81,14 @@ namespace BugTracker.Services
                 return await _context.Projects.ToListAsync();
             }         
             var output = new List<Project>();
-            foreach(var project in await _context.Projects.ToListAsync())
+            foreach(var project in await _context.Projects
+                .Include(t => t.Tickets)
+                .ThenInclude(t => t.TicketPriority)
+                .Include(t => t.Tickets)
+                .ThenInclude(t => t.TicketStatus)
+                .Include(t => t.Tickets)
+                .ThenInclude(t => t.TicketType)
+                .ToListAsync())
             {
                 if(await IsUserOnProjectAsync(userId, project.Id))
                 {

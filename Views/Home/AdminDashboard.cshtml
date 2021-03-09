@@ -1,86 +1,75 @@
-﻿
-<h1>CHARTS</h1>
+﻿@using Microsoft.AspNetCore.Identity
+@using BugTracker.Services
+@inject UserManager<BTUser> userManager
+@inject IBTRoleService roleService
 
-<div class="container">
-    <div class="row">
-        <div class="col-5">
-            <canvas id="myChart" width="400" height="400"></canvas>
-        </div>
-        <div class="col-5">
-            <canvas id="myChart2" width="400" height="400"></canvas>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-
-    </div>
-</div>
-
-
-@section Scripts {
-    <script src="//cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
-    <script>
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                datasets: [{
-                    label: '# of Votes',
-                    data: [12, 19, 3, 5, 2, 3],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-
-    <script>
-        var ctx = document.getElementById('myChart2').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: [
-                    'Red',
-                    'Blue',
-                    'Yellow'
-                ],
-                datasets: [{
-                    label: 'My First Dataset',
-                    data: [300, 50, 100],
-                    backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
-                    ],
-                    hoverOffset: 4
-                }]
-            }
-        });
-    </script>
+@{
+    var users = new MultiSelectList(userManager.Users, "Id", "FullName");
+    var roles = new SelectList(roleService.NonDemoRoles(), "Name", "Name");
 }
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="AdminDashboard" method="post">
+            <div class="row">
+                <div class="col">
+                    <label for="userIds" class="control-label">Employee (You can choose multiple)</label>
+                    <select class="custom-select" name="userIds" style="width: 100%" multiple="multiple" asp-items="@users"></select>
+                </div>
+                <div class="col">
+                    <label for="roleName" class="control-label">Role</label><br />
+                    <select class="form-control" name="roleName" asp-items="@roles"></select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-9"></div>
+                <div class="col-3">
+                    <button type="submit" class="btn btn-info btn-lg btn-block mt-3">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="accordion" id="accordionExample">
+            <div class="card">
+                <div class="card-header" id="headingOne">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Managment/Roles
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="recent-orders" class="table table-bordered table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col">Employee</th>
+                                        <th scope="col">Role</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var user in userManager.Users.ToList())
+                                    {
+                                        <tr>
+                                            <td>@user.FullName</td>
+                                            <td>@((await roleService.ListUserRolesAsync(user)).FirstOrDefault())</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

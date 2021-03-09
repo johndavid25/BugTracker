@@ -54,6 +54,21 @@ namespace BugTracker.Services
             return output;
         }
 
+        public async Task<string> NonDemoUserRole(string userId)
+        {
+            var user = await _context.Users.FindAsync(userId); 
+            var roles = await _userManager.GetRolesAsync(user);
+            var output = "";
+            foreach (var role in roles)
+            {
+                if (role != Roles.DemoUser.ToString())
+                {
+                    output = role;
+                }
+            }
+            return output;
+        }
+
         public async Task<bool> RemoveUserFromRoleAsync(BTUser user, string roleName)
         {
             var result = await _userManager.RemoveFromRoleAsync(user, roleName);
