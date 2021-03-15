@@ -1,4 +1,9 @@
-﻿@model BugTracker.Models.Ticket
+﻿@using BugTracker.Models
+@using BugTracker.Services.Interfaces
+
+@model BugTracker.Models.Ticket
+
+@inject IBTFileService BTFileService
 
 @{
     ViewData["Title"] = "Details";
@@ -141,6 +146,31 @@
 <h4>Attachments</h4>
 <br />
 @* Ticket Attachments *@
+<div class="row clearfix">
+    @foreach (TicketAttachment item in Model.Attachments)
+    {
+        <div class="col-sm-2">
+            <div class="card">
+                <div class="file">
+                    <a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
+                        <div class="hover">
+                            <button type="button" class="btn btn-icon btn-danger">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="icon">
+                            <img src="@BTFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                        </div>
+                        <div class="file-name">
+                            <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                            <small>Size: @BTFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>}
+</div>
+
 <div>
     <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -154,7 +184,7 @@
             </label><br />
             <label class="btn btn-outline-primary btn-sm">
                 <input asp-for="@Model.Attachments.FirstOrDefault().Formfile" type="file" />
-            </label>
+            </label><br />
             <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
         </div>
     </form>
@@ -221,128 +251,76 @@
 <h4>Comments</h4>
 <br />
 @* Ticket Comments *@
-<div class="row">
-    <div class="col-md-4">
-        <form asp-controller="TicketComments" asp-action="Create">
-            <input type="hidden" asp-for="@Model.Id" name="TicketId"/>
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="@Model.Comments" class="control-label"></label>
-                <input name="Comment" class="form-control" />
-                <span for="Comment" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                UserId
-            </th>
-            <th>
-                Comment
-            </th>
-            <th>
-                Created
-            </th>
-            <th>
-                Ticket
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Comments)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.FullName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Comment)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Created)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ticket.Description)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-
-
-
-@*<div class="row">
-        <div class="col">
+@if (User.Identity.IsAuthenticated)
+{
+    <div class="row">
+        <div class="col-md-4">
             <form asp-controller="TicketComments" asp-action="Create">
+                <input type="hidden" asp-for="@Model.Id" name="TicketId" />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                @Html.Hidden("TicketId", Model.Id)
-                <input type="hidden" asp-for="Id" />
                 <div class="form-group">
-                    <label class="control-label h4">Comments</label>
-                    <textarea name="Comment" class="form-control" cols="20" rows="1"></textarea>
+                    <label asp-for="@Model.Comments" class="control-label"></label>
+                    <input name="Comment" class="form-control" />
+                    <span for="Comment" class="text-danger"></span>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-secondary" type="submit">Add Comment</button>
+                    <input type="submit" value="Add Comment" class="btn btn-info" />
                 </div>
             </form>
         </div>
     </div>
+}
+else
+{
+    <h5> Login to leave a commment </h5>
+}
+<br />
 
-    @foreach (var comment in Model.Comments.OrderByDescending(c => c.Created))
-    {
-        <div class="row">
-            <div class="col">
-                <p>@comment.BTUser.FullName</p>
-                <p>
-                    @{
-                        var currentTime = DateTime.Now;
-                        var timeSpan = currentTime - comment.Created;
-                        var elapsedSeconds = timeSpan.Seconds;
-                        var elapsedMinutes = timeSpan.Minutes;
-                        var elapsedHours = timeSpan.Hours;
-                        var elapsedDays = timeSpan.Days;
+@foreach (var comment in Model.Comments.OrderByDescending(c => c.Created))
+{
+    <div class="row">
+        <div class="col">
+            <p>@comment.User.FullName</p>
+        </div>
+        <div class="col">
+            <p>
+                @{
+                    var currentTime = DateTime.Now;
+                    var timeSpan = currentTime - comment.Created;
+                    var elapsedSeconds = timeSpan.Seconds;
+                    var elapsedMinutes = timeSpan.Minutes;
+                    var elapsedHours = timeSpan.Hours;
+                    var elapsedDays = timeSpan.Days;
 
-                        if (elapsedDays >= 1)
-                        {
-                            @comment.Created.ToString("MMM dd, yyyy")
-                        }
-                        else if (elapsedHours >= 1)
-                        {
-                            <span>@elapsedHours h</span>
-
-                        }
-                        else if (elapsedMinutes >= 1)
-                        {
-                            <span>@elapsedMinutes m</span>
-
-                        }
-                        else
-                        {
-                            <span>@elapsedSeconds s</span>
-
-                        }
+                    if (elapsedDays >= 1)
+                    {
+                        @comment.Created.ToString("MMM dd, yyyy")
                     }
-                </p>
-            </div>
+                    else if (elapsedHours >= 1)
+                    {
+                        <span>@elapsedHours h</span>
+
+                    }
+                    else if (elapsedMinutes >= 1)
+                    {
+                        <span>@elapsedMinutes m</span>
+
+                    }
+                    else
+                    {
+                        <span>@elapsedSeconds s</span>
+
+                    }
+                }
+            </p>
         </div>
-        <div class="row">
-            @Html.Raw(comment.Comment)
-        </div>
-    }*@
+    </div>
+    <div class="row">
+        @Html.Raw(comment.Comment)
+    </div>
+}
+
+
 
 
 

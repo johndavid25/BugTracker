@@ -34,13 +34,16 @@ namespace BugTracker.Models
         [MaxFileSize(2 * 1024 * 1024)]
         [AllowExtensions(new string[] { ".jpg", ".png" })]
         public IFormFile ImageFormFile { get; set; }
+
         public string ImageFileName { get; set; }
         public byte[] ImageFileData { get; set; }
         
 
         //Navigation
         public virtual ICollection<BTUser> Members { get; set; } 
+
         public virtual ICollection<Ticket> Tickets { get; set; }
+
         [Display(Name = "Company")]
         public virtual Company Company { get; set; }
     }

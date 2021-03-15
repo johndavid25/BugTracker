@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugTracker.Data;
+using BugTracker.Data.Enums;
 using BugTracker.Models;
 using Microsoft.AspNetCore.Identity;
 using BugTracker.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
 
 namespace BugTracker.Controllers
 {
@@ -18,19 +20,55 @@ namespace BugTracker.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<BTUser> _userManager;
+        private readonly SignInManager<BTUser> _signInManager;
         private readonly IBTHistoryService _historyService;
         private readonly IBTProjectService _projectService;
+        private readonly IBTRoleService _roleService;
 
         public TicketsController(
             ApplicationDbContext context,
             UserManager<BTUser> userManager,
+            SignInManager<BTUser> signInManager,
             IBTHistoryService historyService,
-            IBTProjectService projectService)
+            IBTProjectService projectService,
+            IBTRoleService roleService)
         {
             _context = context;
             _userManager = userManager;
+            _signInManager = signInManager;
             _historyService = historyService;
             _projectService = projectService;
+            _roleService = roleService;
+        }
+
+        public IActionResult ShowFile(int id)
+        {
+            TicketAttachment ticketAttachment = _context.TicketAttachments.Find(id);
+            string fileName = ticketAttachment.FileName;
+            byte[] fileData = ticketAttachment.FileData;
+            string ext = Path.GetExtension(fileName).Replace(".", "");
+
+            Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
+            return File(fileData, $"application/{ext}");
+        }
+
+        public async Task<IActionResult> AcceptInvite(string userId, string code)
+        {
+            var realGuid = Guid.Parse(code);
+            var invite = _context.Invites.FirstOrDefault(i => i.CompanyToken == realGuid && i.InviteeId == userId);
+            if (invite is null)
+            {
+                return NotFound();
+            }
+            if (invite.IsValid)
+            {
+                invite.IsValid = false;
+                var user = await _context.Users.FindAsync(userId);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Create");
+            }
+            return NotFound();
         }
 
         // GET: Tickets
@@ -42,15 +80,16 @@ namespace BugTracker.Controllers
                 .Include(t => t.Project)
                 .Include(t => t.TicketType)
                 .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus);
-            return View(await applicationDbContext.ToListAsync());
+                .Include(t => t.TicketStatus)
+                .ToListAsync();
+            return View(await applicationDbContext);
         }
 
         // GET: Tickets (My Tickets) 
         public async Task<IActionResult> MyTickets()
         {
             var model = new List<Ticket>();
-            if (User.IsInRole("Admin"))//Test if Admin
+            if (User.IsInRole(Roles.Admin.ToString()))//Test if Admin
             {
                 model = await _context.Tickets
                 .Include(t => t.DeveloperUser)
@@ -58,16 +97,17 @@ namespace BugTracker.Controllers
                 .Include(t => t.Project)
                 .Include(t => t.TicketType)
                 .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus).ToListAsync();
+                .Include(t => t.TicketStatus)
+                .ToListAsync();
             }
-            else if (User.IsInRole("ProjectManager"))//Test if Project Manager
+            else if (User.IsInRole(Roles.ProjectManager.ToString()))//Test if Project Manager
             {
                 var userId = _userManager.GetUserId(User);
                 var projects = await _projectService.ListUserProjectsAsync(userId);
 
                 model = projects.SelectMany(p => p.Tickets).ToList();
             }
-            else if (User.IsInRole("Developer"))//Test if Developer
+            else if (User.IsInRole(Roles.Developer.ToString()))//Test if Developer
             {
                 var userId = _userManager.GetUserId(User);
                 model = _context.Tickets.Where(t => t.DeveloperUserId == userId).ToList();
@@ -102,8 +142,8 @@ namespace BugTracker.Controllers
             return RedirectToAction("Details", new { id = notification.TicketId });
         }
 
-            // GET: Tickets/Details/5
-            public async Task<IActionResult> Details(int? id)
+        // GET: Tickets/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -131,6 +171,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Create
+        [Authorize(Roles = ("Admin, ProjectManager, Developer, Submitter"))]
         public IActionResult Create()
         {
             ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName");
@@ -147,6 +188,7 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = ("Admin, ProjectManager, Developer, Submitter"))]
         public async Task<IActionResult> Create([Bind("Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,OwnerUserId,DeveloperUserId,Title,Description")] Ticket ticket)
         {
             if (ModelState.IsValid)
@@ -155,6 +197,7 @@ namespace BugTracker.Controllers
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+
             }
             ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
             ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnerUserId);

@@ -1,4 +1,7 @@
-﻿
+﻿@using Microsoft.AspNetCore.Identity
+@using BugTracker.Services
+@inject UserManager<BTUser> userManager
+@inject IBTProjectService projectService
 
 <div class="container">
     <h1>Project Management</h1>
@@ -15,20 +18,20 @@
         </div> <br />
         <div class="row">
             <div class="col">
-                <label for="userIds" class="control-label">Choose Some Developers</label>
+                <label for="userIds" class="control-label">Choose Developer(s)</label>
                 <select class="custom-select" name="developerIds" style="width: 100%" multiple="multiple" asp-items="@ViewBag.DeveloperIds"></select>
             </div>
             <div class="col">
-                <label for="roleName" class="control-label">Choose Some Submitters</label><br />
+                <label for="roleName" class="control-label">Choose Submitter(s)</label><br />
                 <select class="custom-select" name="submitterIds" multiple="multiple" asp-items="@ViewBag.SubmitterIds"></select>
             </div>
         </div>
         <div class="row">
-            <div class="col-4 offset-4">
-                <button type="submit" class="btn btn-danger btn-lg mt-3">Save Changes</button>
+            <div class="col-9"></div>
+            <div class="col-3">
+                <button type="submit" class="btn btn-info btn-block mt-3">Save Changes</button>
             </div>
         </div>
     </form>
 </div>
-
 

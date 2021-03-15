@@ -9,6 +9,8 @@ namespace BugTracker.Models.ViewModels
     {
         public ICollection<Project> Projects { get; set; } = new List<Project>();
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
+        public ICollection<Ticket> MyTickets { get; set; } = new List<Ticket>();
+
         //public int PercentStatusNew { get; set; }
         //public int PercentStausOpen { get; set; }
         //public int PercentStatusDev { get; set; }

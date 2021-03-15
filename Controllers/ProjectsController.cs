@@ -10,6 +10,9 @@ using BugTracker.Models;
 using BugTracker.Services;
 using BugTracker.Data.Enums;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using BugTracker.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace BugTracker.Controllers
 {
@@ -18,12 +21,21 @@ namespace BugTracker.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IBTProjectService _projectService;
         private readonly IBTRoleService _roleService;
+        private readonly IBTImageService _imageService;
+        private readonly UserManager<BTUser> _userMangaer;
 
-        public ProjectsController(ApplicationDbContext context, IBTProjectService projectService, IBTRoleService roleService)
+        public ProjectsController(
+            ApplicationDbContext context, 
+            IBTProjectService projectService, 
+            IBTRoleService roleService,
+            IBTImageService imageService,
+            UserManager<BTUser> userMangaer)
         {
             _context = context;
             _projectService = projectService;
             _roleService = roleService;
+            _imageService = imageService;
+            _userMangaer = userMangaer;
         }
 
         [Authorize (Roles = "Admin, ProjectManager")]
@@ -66,6 +78,26 @@ namespace BugTracker.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // GET: Projects (My Projects) 
+        public async Task<IActionResult> MyProjects()
+        {
+            var model = new List<Project>();
+            if (User.IsInRole(Roles.Admin.ToString())) //Test if Admin 
+            {
+                model = await _context.Projects
+                    .Include(p => p.Members)
+                    .Include(p => p.Tickets)
+                    .Include(p => p.Company)
+                    .ToListAsync();
+            }
+            else 
+            {
+                var userId = _userMangaer.GetUserId(User); // For all other roles 
+                model = await _projectService.ListUserProjectsAsync(userId);
+            }
+            return View(model);
+        }
+
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -101,10 +133,13 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId")] Project project)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId")] Project project, IFormFile ImageFormFile)
         {
             if (ModelState.IsValid)
             {
+                project.ImageFileName = _imageService.RecordContentType(ImageFormFile);
+                project.ImageFileData = await _imageService.EncodeFileAsync(ImageFormFile);
+
                 _context.Add(project);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -137,7 +172,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId")] Project project)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId")] Project project, IFormFile ImageFormFile)
         {
             if (id != project.Id)
             {
@@ -148,6 +183,13 @@ namespace BugTracker.Controllers
             {
                 try
                 {
+                    if (ImageFormFile != null)
+                    {
+                        project.ImageFileName = _imageService.RecordContentType(ImageFormFile);
+                        project.ImageFileData = await _imageService.EncodeFileAsync(ImageFormFile);
+
+                    }
+
                     _context.Update(project);
                     await _context.SaveChangesAsync();
                 }

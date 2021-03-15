@@ -73,7 +73,7 @@ namespace BugTracker.Services
             return flag;
         }
 
-        public async Task<IEnumerable<Project>> ListUserProjectsAsync(string userId)
+        public async Task<List<Project>> ListUserProjectsAsync(string userId)
         {
             var user = await _userManager.FindByIdAsync(userId);
             if (await _roleService.IsUserInRoleAsync(user, Roles.Admin.ToString()))
@@ -132,23 +132,23 @@ namespace BugTracker.Services
             }
         }
 
-        public async Task<IEnumerable<BTUser>> DevelopersOnProjectsAsync(int projectId)
+        public async Task<List<BTUser>> DevelopersOnProjectsAsync(int projectId)
         {
             var developers = await _userManager.GetUsersInRoleAsync(Roles.Developer.ToString());
             var onProject = await UsersOnProjectAsync(projectId);
             var devsOnProject = developers.Intersect(onProject).ToList();
             return devsOnProject; 
         }
-
-        public async Task<IEnumerable<BTUser>> SubmittersOnProjectsAsync(int projectId)
+                         
+        public async Task<List<BTUser>> SubmittersOnProjectsAsync(int projectId)
         {
             var submitters = await _userManager.GetUsersInRoleAsync(Roles.Submitter.ToString());
             var onProject = await UsersOnProjectAsync(projectId);
             var subsOnProject = submitters.Intersect(onProject).ToList();
             return subsOnProject;
         }
-
-        public async Task<IEnumerable<BTUser>> UsersNotOnProjectAsync(int projectId)
+                       
+        public async Task<List<BTUser>> UsersNotOnProjectAsync(int projectId)
         {
             var output = new List<BTUser>();
             foreach (var user in await _context.Users.ToListAsync())
@@ -160,8 +160,8 @@ namespace BugTracker.Services
             }
             return output;
         }
-
-        public async Task<IEnumerable<BTUser>> UsersOnProjectAsync(int projectId)
+                          
+        public async Task<List<BTUser>> UsersOnProjectAsync(int projectId)
         {
             var output = new List<BTUser>();
             foreach (var user in await _context.Users.ToListAsync())
@@ -173,5 +173,6 @@ namespace BugTracker.Services
             }
             return output;
         }
-    }
+    }                     
 }
+  

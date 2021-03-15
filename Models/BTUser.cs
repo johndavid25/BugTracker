@@ -39,6 +39,7 @@ namespace BugTracker.Models
 
         //Other
         [NotMapped]
+        [Display(Name = "Full Name")]
         public string FullName { get { return $"{FirstName} {LastName}"; } }
     }
 }

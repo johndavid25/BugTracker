@@ -40,7 +40,10 @@ namespace BugTracker
             services.AddScoped<IBTRoleService, BTRoleService>();
             services.AddScoped<IBTProjectService, BTProjectService>();
             services.AddScoped<IBTHistoryService, BTHistoryService>();
+            services.AddScoped<IBTFileService, BTFileService>();
             services.AddScoped<IBTNotificationsService, BTNotificationsService>();
+            services.AddScoped<IBTInviteService, BTInviteService>();
+            services.AddTransient<IBTImageService, BTImageService>();
 
             //Services needed to send emails
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
