@@ -78,7 +78,7 @@ namespace BugTracker.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null, string demoEmail = null)
         {
-            returnUrl ??= Url.Content("~/");
+            returnUrl ??= Url.Content("~/Home/Dashboard");
 
             //demoEmail is null by default this code only triggers on a doemo login
             if (!string.IsNullOrWhiteSpace(demoEmail))

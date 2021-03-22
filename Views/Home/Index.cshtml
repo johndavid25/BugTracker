@@ -121,8 +121,6 @@
                 <p>
                     Sign in to your account or register to create a new account.
                 </p>
-                <a class="button" asp-controller="Home" asp-action="Dashboard">Go To Dashboard</a>
-
             </div>
 
             <div class="col one-fourth action">
@@ -133,7 +131,7 @@
 
             <div class="col one-fourth action">
 
-                <a asp-controller="Home" asp-action="Dashboard" class="button" style="text-align: center; width: 100%">Login</a>
+                <a  asp-area="Identity" asp-page="/Account/Login" class="button" style="text-align: center; width: 100%">Login</a>
 
             </div>
 

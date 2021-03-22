@@ -40,7 +40,6 @@ namespace BugTracker.Models
         [DataType(DataType.Date)]
         public DateTimeOffset? Updated { get; set; }
 
-
         //Navigation
         public virtual Project Project { get; set; }
         public virtual TicketType TicketType { get; set; }

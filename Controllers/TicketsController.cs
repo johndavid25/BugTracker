@@ -191,21 +191,53 @@ namespace BugTracker.Controllers
         [Authorize(Roles = ("Admin, ProjectManager, Developer, Submitter"))]
         public async Task<IActionResult> Create([Bind("Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,OwnerUserId,DeveloperUserId,Title,Description")] Ticket ticket)
         {
-            if (ModelState.IsValid)
+            if (!(await _roleService.IsUserInRoleAsync(await _userManager.GetUserAsync(User), Roles.DemoUser.ToString())))
             {
-                ticket.Created = DateTimeOffset.Now;
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    var statusNew = _context.TicketStatus.FirstOrDefault(s => s.Name == "New");
+
+                    ticket.TicketStatus = statusNew;
+                    ticket.DeveloperUserId = null;
+                    ticket.OwnerUserId = _userManager.GetUserId(User);
+                    ticket.Created = DateTimeOffset.Now;
+                    ticket.Updated = ticket.Created;
+                    _context.Add(ticket);
+                    await _context.SaveChangesAsync();
+
+                    var statusClosed = _context.TicketStatus.FirstOrDefault(s => s.Name == "Closed").Id;
+
+                    return RedirectToAction(nameof(Index));
+
+
+
+                }
+                ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+                ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnerUserId);
+                ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
+                ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+                ViewData["TicketStatusId"] = new SelectList(_context.TicketStatus, "Id", "Name", ticket.TicketStatusId);
+                ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+                return View(ticket);
+            }
+            else
+            {
+                if (ModelState.IsValid)
+                {
+                    ticket.Created = DateTimeOffset.Now;
+                    _context.Add(ticket);
+                    return RedirectToAction(nameof(Index));
+
+                }
+                ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
+                ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnerUserId);
+                ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
+                ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
+                ViewData["TicketStatusId"] = new SelectList(_context.TicketStatus, "Id", "Name", ticket.TicketStatusId);
+                ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+                return View(ticket);
 
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.OwnerUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatus, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
-            return View(ticket);
         }
 
         // GET: Tickets/Edit/5
