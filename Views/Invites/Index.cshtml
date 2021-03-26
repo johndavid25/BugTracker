@@ -4,68 +4,181 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CompanyToken)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InviteDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsValid)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Company)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Invitor)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Invitee)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CompanyToken)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InviteDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsValid)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Company.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Invitor.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Invitee.FullName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="content web-app">
+
+    <div class="row no-gutters app-block">
+        <div class="col-md-3 app-sidebar">
+            <button class="btn btn-primary btn-block mb-3" data-toggle="modal" data-target="#compose">
+                Compose Invite
+            </button>
+            <div>
+                <div class="list-group list-group-flush">
+                    <a asp-action="Index" class="list-group-item active d-flex align-items-center">
+                        <i class="ti-email list-group-icon mr-2"></i>
+                        Inbox
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-9 app-content">
+            <h3 class="mb-4">Invite</h3>
+            <div class="app-content-body">
+                <div class="app-lists">
+                    <ul class="list-group list-group-flush">
+                        @foreach (var item in Model)
+                        {
+                            <li class="list-group-item">
+                                <div class="d-none d-sm-block">
+                                    <figure class="avatar avatar-sm mr-3">
+                                        <img src="~/media/image/user/man_avatar5.jpg"
+                                             class="rounded-circle" alt="image">
+                                    </figure>
+                                </div>
+                                <div class="flex-grow-1 min-width-0">
+                                    <div class="mb-1 d-flex justify-content-between align-items-center">
+                                        <div class="text-truncate app-list-title">@item.Invitee.FullName (@item.Email)</div>
+                                        <div class="pl-3 d-flex">
+                                            <span class="text-nowrap text-muted">@item.InviteDate.ToString("MMM, dd, yyyy")</span>
+                                            <div class="dropdown ml-3">
+                                                <a href="#details-@item.Id" class="btn btn-floating btn-sm" data-toggle="dropdown">
+                                                    <i class="ti-more-alt"></i>
+                                                </a>
+                                                @*<div class="dropdown-menu dropdown-menu-right">
+                                                    <a class="dropdown-item" href="#">Details?</a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                </div>*@
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-muted d-flex justify-content-between">
+                                        <div class="text-truncate small">
+                                            @item.Company.Name
+                                        </div>
+                                        <div class="text-nowrap pl-3">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                        }
+                    </ul>
+                </div>
+                <!-- end::app-lists -->
+                <!-- begin:app-detail -->
+                @foreach (var item in Model)
+                {
+                    <div class="app-detail" id="details-@item.Id">
+                        <div class="card-header bg-white">
+                            <div class="app-detail-action-left align-items-center">
+                                <a class="app-detail-close-button btn btn-outline-light mr-3" href="#">
+                                    <i class="ti-arrow-left"></i>
+                                </a>
+                                <h5 class="mb-0">
+                                    @item.Company.Name
+                                </h5>
+                            </div>
+                        </div>
+                        <div class="app-detail-article">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <figure class="avatar avatar-sm mr-3">
+                                            <img src="~/media/image/user/women_avatar5.jpg"
+                                                 class="rounded-circle"
+                                                 alt="image">
+                                        </figure>
+                                        <div>
+                                            <h6 class="m-b-0">
+                                                <span class="text-primary">@item.Invitee.FullName</span>
+                                                <span class="d-sm-inline d-none text-muted"> &lt;@item.Email&gt;</span>
+                                            </h6>
+                                            <span class="small text-muted">from @item.Invitor.FullName</span>
+                                        </div>
+                                    </div>
+                                    <div class="ml-auto d-none d-md-block">
+                                        <span class="text-muted">@item.InviteDate.ToString("MMM, dd, yyyy")</span>
+                                    </div>
+                                </div>
+                                <h1>Detail</h1>
+                                <p>
+                                    @Html.DisplayNameFor(model => model.Email):  @Html.DisplayFor(modelItem => item.Email)
+                                </p>
+                                <p>
+                                    @Html.DisplayNameFor(model => model.CompanyToken): @Html.DisplayFor(modelItem => item.CompanyToken)
+                                </p>
+                                <p>
+                                    @Html.DisplayNameFor(model => model.InviteDate): @Html.DisplayFor(modelItem => item.InviteDate)
+                                </p>
+                                <p>
+                                    @Html.DisplayNameFor(model => model.IsValid): @Html.DisplayFor(modelItem => item.IsValid)
+                                </p>
+                                <p>
+                                    @Html.DisplayNameFor(model => model.Company): @Html.DisplayFor(modelItem => item.Company.Name)
+                                </p>
+                                <p>
+                                    @Html.DisplayNameFor(model => model.Invitor): @Html.DisplayFor(modelItem => item.Invitor.FullName)
+                                </p>
+                                <p>
+                                    @Html.DisplayNameFor(model => model.Invitee): @Html.DisplayFor(modelItem => item.Invitee.FullName)
+                                </p>
+                            </div>
+                            <hr class="m-0">
+                        </div>
+                    </div>
+
+                }
+
+                <div class="modal fade" tabindex="-1" role="dialog" id="compose">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Compose Invite</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <i class="ti-close"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+
+                                <form asp-action="Create">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-group">
+                                        <input name="Email" class="form-control" placeholder="Email" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input name="FirstName" class="form-control" placeholder="First Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input name="LastName" class="form-control" placeholder="LastName" />
+                                    </div>
+                                    <div class="form-group">
+                                        <input name="CompanyName" class="form-control" placeholder="Company Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="CompanyDescription" class="form-control" placeholder="Company Description"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <input name="ProjectName" class="form-control" placeholder="Project Name" />
+                                    </div>
+                                    <div class="form-group">
+                                        <textarea name="ProjectDescription" class="form-control" placeholder="Project Description"></textarea>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-9"></div>
+                                        <div class="col-3">
+                                            <button type="submit" class="btn btn-primary">Send</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -133,12 +133,12 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId")] Project project, IFormFile ImageFormFile)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId,ImageFormFile")] Project project, IFormFile ImageFormFile)
         {
             if (ModelState.IsValid)
             {
-                project.ImageFileName = _imageService.RecordContentType(ImageFormFile);
-                project.ImageFileData = await _imageService.EncodeFileAsync(ImageFormFile);
+                project.ImageFileName = _imageService.RecordContentType(project.ImageFormFile);
+                project.ImageFileData = await _imageService.EncodeFileAsync(project.ImageFormFile);
 
                 _context.Add(project);
                 await _context.SaveChangesAsync();
@@ -172,7 +172,7 @@ namespace BugTracker.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin, ProjectManager")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId")] Project project, IFormFile ImageFormFile)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,ImageFileName,ImageFileData,CompanyId,ImageFormFile")] Project project)
         {
             if (id != project.Id)
             {
@@ -183,10 +183,10 @@ namespace BugTracker.Controllers
             {
                 try
                 {
-                    if (ImageFormFile != null)
+                    if (project.ImageFormFile != null)
                     {
-                        project.ImageFileName = _imageService.RecordContentType(ImageFormFile);
-                        project.ImageFileData = await _imageService.EncodeFileAsync(ImageFormFile);
+                        project.ImageFileName = _imageService.RecordContentType(project.ImageFormFile);
+                        project.ImageFileData = await _imageService.EncodeFileAsync(project.ImageFormFile);
 
                     }
 

@@ -51,8 +51,8 @@ namespace BugTracker.Controllers
 
             var invite = await _context.Invites
                 .Include(i => i.Company)
-                .Include(i => i.Invitee)
-                .Include(i => i.Invitor)
+                .Include(i => i.Invitee.FullName)
+                .Include(i => i.Invitor.FullName)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (invite == null)
             {

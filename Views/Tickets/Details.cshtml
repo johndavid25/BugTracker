@@ -9,370 +9,278 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Ticket</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Created)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Created)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Project)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Project.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketPriority)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketPriority.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketStatus)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketStatus.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.TicketType)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.TicketType.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.OwnerUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.OwnerUser.FullName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DeveloperUser)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DeveloperUser.FullName)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="page-header d-md-flex justify-content-between">
+    <div>
+        <h3>Details</h3>
+    </div>
+    <div class="mt-2 mt-md-0">
+        <div class="dropdown">
+            <a href="#" class="btn btn-info dropdown-toggle" data-toggle="dropdown">
+                <i class="ti-settings mr-2"></i> Actions
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+                <a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+                <a class="dropdown-item" asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
 </div>
 
-<br /><br />
-
-<h4>History</h4>
-@* Ticket History (Read Only) *@
 <div class="row">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Property
-                </th>
-                <th>
-                    OldValue
-                </th>
-                <th>
-                    NewValue
-                </th>
-                <th>
-                    Created
-                </th>
-                <th>
-                    Ticket
-                </th>
-                <th>
-                    User
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Histories)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Property)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.OldValue)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NewValue)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Created)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Ticket.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.User.FullName)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-</div>
-
-<h4>Attachments</h4>
-<br />
-@* Ticket Attachments *@
-<div class="row clearfix">
-    @foreach (TicketAttachment item in Model.Attachments)
-    {
-        <div class="col-sm-2">
-            <div class="card">
-                <div class="file">
-                    <a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id">
-                        <div class="hover">
-                            <button type="button" class="btn btn-icon btn-danger">
-                                <i class="fa fa-trash"></i>
-                            </button>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="slider-for">
+                            <div class="slick-slide-item">
+                                <img src="~/media/image/products/product1.png"
+                                     class="img-fluid rounded"
+                                     alt="image">
+                            </div>
                         </div>
-                        <div class="icon">
-                            <img src="@BTFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex justify-content-between mb-2">
+                            <p class="text-muted mb-0">@Html.DisplayFor(model => model.Project.Name)</p>
+                            <span class="d-flex align-items-center">
+                                <i class="fas fa-user-tie text-danger mr-2"></i> @Html.DisplayFor(model => model.OwnerUser.FirstName)
+                                <i class="fas fa-user-cog text-success ml-2 mr-2"></i> @Html.DisplayFor(model => model.DeveloperUser.FirstName)
+                            </span>
                         </div>
-                        <div class="file-name">
-                            <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
-                            <small>Size: @BTFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                        <h2>@Html.DisplayFor(model => model.Title)</h2>
+                        <p>
+                            <span class="badge bg-success-bright text-success">@Html.DisplayFor(model => model.Created)</span>
+                            <span class="badge bg-success-bright text-warning">@Html.DisplayFor(model => model.Updated)</span>
+                        </p>
+                        <p>
+                            @Html.DisplayFor(model => model.Description)
+                        </p>
+                        <div class="font-size-30 mb-2">
+                            @*<strong>
+                                    @Html.DisplayFor(model => model.DeveloperUser.FullName)
+                                </strong>
+                                <small class="mr-2">
+                                    <del>$80.50</del>
+                                </small>
+                                <small class="text-danger">50% Off</small>*@
                         </div>
-                    </a>
+                        <br /><br />
+                        <ul class="list-unstyled">
+                            <li>
+                                @Html.DisplayNameFor(model => model.TicketPriority): @Html.DisplayFor(model => model.TicketPriority.Name)
+                            </li>
+                            <li>
+                                @Html.DisplayNameFor(model => model.TicketStatus): @Html.DisplayFor(model => model.TicketStatus.Name)
+                            </li>
+                            <li>
+                                @Html.DisplayNameFor(model => model.TicketType): @Html.DisplayFor(model => model.TicketType.Name)
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>}
-</div>
-
-<div>
-    <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <input type="hidden" asp-for="@Model.Id" name="TicketId">
-
-        <div class="media-body ml-3">
-            <label class="form-label d-block mb-2">Add Attachment</label>
-            <label>
-                Description
-                <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
-            </label><br />
-            <label class="btn btn-outline-primary btn-sm">
-                <input asp-for="@Model.Attachments.FirstOrDefault().Formfile" type="file" />
-            </label><br />
-            <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
         </div>
-    </form>
-</div>
-<div class="row">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    FileName
-                </th>
-                <th>
-                    FileData
-                </th>
-                <th>
-                    Description
-                </th>
-                <th>
-                    Created
-                </th>
-                <th>
-                    Ticket
-                </th>
-                <th>
-                    User
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Attachments)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FileName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FileData)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Created)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Ticket.Description)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.User.Id)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
 
-</div>
+        <div class="card">
+            <div class="card-body">
+                <ul class="nav nav-pills mb-4" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="profile-tab" data-toggle="tab" href="#profile" role="tab"
+                           aria-controls="profile" aria-selected="true">Comments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="home-tab" data-toggle="tab" href="#home" role="tab"
+                           aria-controls="home" aria-selected="false">Attachments</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab"
+                           aria-controls="contact" aria-selected="false">History</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <h4 class="mb-4">Comments</h4>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <form class="mt-4" asp-controller="TicketComments" asp-action="Create">
+                                    <input type="hidden" asp-for="@Model.Id" name="TicketId" />
+                                    <div class="form-group">
+                                        <textarea name="Comment" rows="5" class="form-control" placeholder="Leave a comment about ticket..."></textarea>
+                                    </div>
+                                    <button class="btn btn-info" type="submit">Add Comment</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div>
+                            @foreach (var comment in Model.Comments.OrderByDescending(c => c.Created))
+                            {
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex px-0 py-4">
+                                        <a href="#" class="flex-shrink-0">
+                                            <figure class="avatar mr-3">
+                                                <img src="~/media/image/user/man_avatar1.jpg"
+                                                     class="rounded-circle" alt="image">
+                                            </figure>
+                                        </a>
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between">
+                                                <a href="#">
+                                                    <h6>@comment.User.FullName</h6>
+                                                    <ul class="list-inline mb-1">
+                                                        <li class="list-inline-item mb-0">
+                                                            @{
+                                                                var currentTime = DateTime.Now;
+                                                                var timeSpan = currentTime - comment.Created;
+                                                                var elapsedSeconds = timeSpan.Seconds;
+                                                                var elapsedMinutes = timeSpan.Minutes;
+                                                                var elapsedHours = timeSpan.Hours;
+                                                                var elapsedDays = timeSpan.Days;
 
-<h4>Comments</h4>
-<br />
-@* Ticket Comments *@
-@if (User.Identity.IsAuthenticated)
-{
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-controller="TicketComments" asp-action="Create">
-                <input type="hidden" asp-for="@Model.Id" name="TicketId" />
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="@Model.Comments" class="control-label"></label>
-                    <input name="Comment" class="form-control" />
-                    <span for="Comment" class="text-danger"></span>
+                                                                if (elapsedDays >= 1)
+                                                                {
+                                                                    @comment.Created.ToString("MMM dd, yyyy")
+                                                                }
+                                                                else if (elapsedHours >= 1)
+                                                                {
+                                                                    <span>@elapsedHours h</span>
+
+                                                                }
+                                                                else if (elapsedMinutes >= 1)
+                                                                {
+                                                                    <span>@elapsedMinutes m</span>
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span>@elapsedSeconds s</span>
+
+                                                                }
+                                                            }
+                                                        </li>
+                                                    </ul>
+                                                </a>
+                                                <div class="ml-auto">
+                                                    <div class="dropdown">
+                                                        <a href="#" data-toggle="dropdown" class="btn btn-floating" aria-haspopup="true" aria-expanded="false">
+                                                            <i class="ti-more-alt"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu dropdown-menu-right">
+                                                            <a href="#" class="dropdown-item">Edit</a>
+                                                            <a href="#" class="dropdown-item">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <p class="mb-0">@Html.Raw(comment.Comment)</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            }
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <h4 class="mb-4">Attachments</h4>
+                        <div class="row clearfix">
+                            @foreach (TicketAttachment item in Model.Attachments)
+                            {
+                                <div class="col-sm-2">
+                                    <div class="card">
+                                        <div class="file">
+                                            <a asp-action="ShowFile" asp-controller="Tickets" asp-route-Id="@item.Id" target="_blank">
+                                                <div class="hover">
+                                                    <a asp-controller="TicketAttachments" asp-action="Delete" asp-route-id="@item.Id" 
+                                                       target="_blank" role="button" class="btn btn-icon btn-danger btn-sm">
+                                                        <i class="fa fa-trash"></i>
+                                                    </a>
+                                                </div>
+                                                <div class="icon">
+                                                    <img src="@BTFileService.GetFileIcon(item.FileName)" style="height:60px;width:60px" />
+                                                </div>
+                                                <div class="file-name">
+                                                    <p class="m-b-5 text-muted">@System.IO.Path.GetFileNameWithoutExtension(item.FileName)</p>
+                                                    <small>Size: @BTFileService.FormatFileSize(item.FileData.Length) <span class="date text-muted">@item.Created.ToString("MMM dd, yyyy")</span></small>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>}
+                        </div>
+                        <div>
+                            <form asp-action="Create" asp-controller="TicketAttachments" enctype="multipart/form-data" method="post">
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <input type="hidden" asp-for="@Model.Id" name="TicketId">
+                                <div class="media-body ml-3">
+                                    <div class="col">
+                                        <label class="form-label d-block mr-2 font-weight-bold">Add Attachment</label>
+                                        <label class="btn btn-outline-primary btn-sm font-weight-bold">
+                                            <input asp-for="@Model.Attachments.FirstOrDefault().Formfile" type="file" />
+                                        </label>
+                                        <label class="font-weight-bold">
+                                            Description
+                                            <input asp-for="@Model.Attachments.FirstOrDefault().Description" type="text" class="form-control" />
+                                        </label>
+                                    </div>
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm md-btn-flat">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                        <h4 class="mb-4">History</h4>
+                        <div class="row">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Property
+                                        </th>
+                                        <th>
+                                            OldValue
+                                        </th>
+                                        <th>
+                                            NewValue
+                                        </th>
+                                        <th>
+                                            Created
+                                        </th>
+                                        <th>
+                                            User
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Histories)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Property)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.OldValue)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.NewValue)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Created)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.User.FullName)
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="submit" value="Add Comment" class="btn btn-info" />
-                </div>
-            </form>
+            </div>
         </div>
+
     </div>
-}
-else
-{
-    <h5> Login to leave a commment </h5>
-}
-<br />
-
-@foreach (var comment in Model.Comments.OrderByDescending(c => c.Created))
-{
-    <div class="row">
-        <div class="col">
-            <p>@comment.User.FullName</p>
-        </div>
-        <div class="col">
-            <p>
-                @{
-                    var currentTime = DateTime.Now;
-                    var timeSpan = currentTime - comment.Created;
-                    var elapsedSeconds = timeSpan.Seconds;
-                    var elapsedMinutes = timeSpan.Minutes;
-                    var elapsedHours = timeSpan.Hours;
-                    var elapsedDays = timeSpan.Days;
-
-                    if (elapsedDays >= 1)
-                    {
-                        @comment.Created.ToString("MMM dd, yyyy")
-                    }
-                    else if (elapsedHours >= 1)
-                    {
-                        <span>@elapsedHours h</span>
-
-                    }
-                    else if (elapsedMinutes >= 1)
-                    {
-                        <span>@elapsedMinutes m</span>
-
-                    }
-                    else
-                    {
-                        <span>@elapsedSeconds s</span>
-
-                    }
-                }
-            </p>
-        </div>
-    </div>
-    <div class="row">
-        @Html.Raw(comment.Comment)
-    </div>
-}
+</div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<!-- ./ Content -->

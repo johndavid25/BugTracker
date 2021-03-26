@@ -11,7 +11,7 @@
     <title>Alphine</title>
 
     <!-- Favicon -->
-    <link rel="shortcut icon" href="~/img/favicon.png" />
+    <link rel="shortcut icon" href="~/media/image/lion_favicon.png" />
 
     <!-- Main css -->
     <link rel="stylesheet" href="~/css/bundle.css" type="text/css">
@@ -25,8 +25,15 @@
     <!-- DataTable -->
     <link rel="stylesheet" href="~/css/datatables.min.css" type="text/css">
 
+    <!-- Quill editor -->
+    <link href="~/css/quill.snow.css" rel="stylesheet" type="text/css">
+
+    <!-- Tagsinput -->
+    <link rel="stylesheet" href="~/css/bootstrap-tagsinput.css" type="text/css">
+
     <!-- App css -->
     <link rel="stylesheet" href="~/css/app.min.css" type="text/css">
+    <link rel="stylesheet" href="~/css/dropzone.css" type="text/css">
 
     <!--Font Awesome-->
     <script src="https://kit.fontawesome.com/53a6117d50.js" crossorigin="anonymous"></script>
@@ -71,8 +78,9 @@
                     </div>
 
                     <div class="header-logo">
-                        <a asp-controller="Home" asp-action="Index">
-                            <img class="logo" src="~/media/image/logo.png" alt="logo">
+                        <a asp-controller="Home" asp-action="Dashboard">
+                            @*<img class="logo" src="~/media/image/logo.png" alt="logo">*@
+                            <h1>ALPHINE</h1>
                         </a>
                     </div>
                 </div>
@@ -119,42 +127,22 @@
                                                     </div>
                                                 </a>
                                             </div>
-                                            <div class="col-6">
-                                                <a href="mail.html">
-                                                    <div class="border-radius-1 text-center mb-3">
-                                                        <figure class="avatar avatar-lg border-0">
-                                                            <span class="avatar-title bg-secondary text-white rounded-circle">
-                                                                <i class="width-30 height-30" data-feather="mail"></i>
-                                                            </span>
-                                                        </figure>
-                                                        <div class="mt-2">Mail</div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-6">
-                                                <a href="todo-list.html">
-                                                    <div class="border-radius-1 text-center">
-                                                        <figure class="avatar avatar-lg border-0">
-                                                            <span class="avatar-title bg-info text-white rounded-circle">
-                                                                <i class="width-30 height-30" data-feather="check-circle"></i>
-                                                            </span>
-                                                        </figure>
-                                                        <div class="mt-2">Todo List</div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-6">
-                                                <a href="file-manager.html">
-                                                    <div class="border-radius-1 text-center">
-                                                        <figure class="avatar avatar-lg border-0">
-                                                            <span class="avatar-title bg-warning text-white rounded-circle">
-                                                                <i class="width-30 height-30" data-feather="file"></i>
-                                                            </span>
-                                                        </figure>
-                                                        <div class="mt-2">File Manager</div>
-                                                    </div>
-                                                </a>
-                                            </div>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <div class="col-6">
+                                                    <a asp-controller="Invites" asp-action="Index">
+                                                        <div class="border-radius-1 text-center mb-3">
+                                                            <figure class="avatar avatar-lg border-0">
+                                                                <span class="avatar-title bg-secondary text-white rounded-circle">
+                                                                    <i class="width-30 height-30" data-feather="mail"></i>
+                                                                </span>
+                                                            </figure>
+                                                            <div class="mt-2">Invites</div>
+                                                        </div>
+                                                    </a>
+                                                </div>
+
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -400,17 +388,6 @@
                                 <span>My Tickets</span>
                             </a>
                         </li>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li>
-                                <a asp-controller="Invites" asp-action="Index">
-                                    <span class="nav-link-icon">
-                                        <i data-feather="file-text"></i>
-                                    </span>
-                                    <span>Invites</span>
-                                </a>
-                            </li>
-                        }
                     </ul>
                 </div>
             </div>
@@ -454,8 +431,19 @@
     <!-- Dashboard scripts -->
     <script src="~/js/dashboard.js"></script>
 
+    <!-- Tagsinput -->
+    <script src="~/js/bootstrap-tagsinput.js"></script>
+    <script src="~/js/tagsinput.js"></script>
+
+    <!-- quill -->
+    <script src="~/js/quill.js"></script>
+
+    <!-- Mail example -->
+    <script src="~/js/mail.js"></script>
+
     <!-- App scripts -->
     <script src="~/js/app.min.js"></script>
+    <script src="~/js/dropzone.js"></script>
 
     <!--Summernote Editor-->
     <script src="//cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>

@@ -201,15 +201,12 @@ namespace BugTracker.Controllers
                     ticket.DeveloperUserId = null;
                     ticket.OwnerUserId = _userManager.GetUserId(User);
                     ticket.Created = DateTimeOffset.Now;
-                    ticket.Updated = ticket.Created;
                     _context.Add(ticket);
                     await _context.SaveChangesAsync();
 
-                    var statusClosed = _context.TicketStatus.FirstOrDefault(s => s.Name == "Closed").Id;
+                    var statusClosed = _context.TicketStatus.FirstOrDefault(s => s.Name == "Closed");
 
                     return RedirectToAction(nameof(Index));
-
-
 
                 }
                 ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "FullName", ticket.DeveloperUserId);
@@ -241,6 +238,7 @@ namespace BugTracker.Controllers
         }
 
         // GET: Tickets/Edit/5
+        [Authorize(Roles = ("Admin, ProjectManager"))]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -267,7 +265,8 @@ namespace BugTracker.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,OwnerUserId,DeveloperUserId,Title,Description,")] Ticket ticket)
+        [Authorize(Roles = ("Admin, ProjectManager"))]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProjectId,TicketPriorityId,TicketStatusId,TicketTypeId,OwnerUserId,DeveloperUserId,Title,Description,Created,Updated")] Ticket ticket)
         {
             if (id != ticket.Id)
             {

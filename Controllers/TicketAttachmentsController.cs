@@ -54,7 +54,7 @@ namespace BugTracker.Controllers
         public IActionResult Create()
         {
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName");
             return View();
         }
 
@@ -80,7 +80,7 @@ namespace BugTracker.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketAttachment.TicketId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName", ticketAttachment.UserId);
             return View(ticketAttachment);
         }
 
@@ -98,7 +98,7 @@ namespace BugTracker.Controllers
                 return NotFound();
             }
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketAttachment.TicketId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName", ticketAttachment.UserId);
             return View(ticketAttachment);
         }
 
@@ -135,7 +135,7 @@ namespace BugTracker.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketAttachment.TicketId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketAttachment.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "FullName", ticketAttachment.UserId);
             return View(ticketAttachment);
         }
 
@@ -168,6 +168,8 @@ namespace BugTracker.Controllers
             _context.TicketAttachments.Remove(ticketAttachment);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
+            //return RedirectToAction("Detail", "Tickets", id);
         }
 
         private bool TicketAttachmentExists(int id)
